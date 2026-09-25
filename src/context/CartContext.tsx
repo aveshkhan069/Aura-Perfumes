@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Product, CartItem } from '../types';
+import { useAuth } from './AuthContext';
 
 interface CartContextType {
   items: CartItem[];
@@ -23,6 +24,8 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const previousUserId = useRef<string | null>(null);
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem('aura_cart');
@@ -42,6 +45,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error(e);
     }
   }, [items]);
+
+  useEffect(() => {
+    if (isAuthLoading) return;
+    if (previousUserId.current && !user) {
+      setItems([]);
+      setAppliedPromo(null);
+      localStorage.removeItem('aura_cart');
+    }
+    previousUserId.current = user?.id || null;
+  }, [isAuthLoading, user]);
 
   const addToCart = (product: Product, size?: string, quantity: number = 1) => {
     const selectedSize = size || product.size || '100ml';

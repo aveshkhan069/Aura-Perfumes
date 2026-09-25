@@ -121,7 +121,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                     className="flex items-center gap-4 py-2.5 px-2 hover:bg-stone-50 cursor-pointer transition-colors"
                   >
                     <img
-                      src={product.images?.[0] || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+                      src={product.images?.[0] || '/product-placeholder.svg'}
                       alt={product.name}
                       className="w-12 h-12 object-cover bg-stone-100 shrink-0"
                     />

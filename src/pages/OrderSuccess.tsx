@@ -95,7 +95,7 @@ export const OrderSuccess: React.FC = () => {
                 <div key={idx} className="py-3 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <img
-                      src={item.image || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+                      src={item.image || '/product-placeholder.svg'}
                       alt={item.productName}
                       className="w-16 h-16 object-cover bg-stone-100 border border-stone-200 shrink-0"
                     />

@@ -54,6 +54,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onQuickView }) => 
     setQuantity(1);
     setReviews(initialReviews.filter((r) => r.productId === product.id));
     setHasSubmittedReview(false);
+    setActiveImageIdx(0);
   }, [id, product]);
 
   const isFavorited = isInWishlist(product.id);
@@ -64,8 +65,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onQuickView }) => 
   const currentOrigPrice = sizeOption ? sizeOption.originalPrice : product.originalPrice;
   const discountPct = Math.round(((currentOrigPrice - currentPrice) / currentOrigPrice) * 100);
 
-  // Single dedicated product image
-  const productImage = product.primaryImage || product.images?.[0] || '';
+  // Gallery state - allows switching between product images
+  const galleryImages = product.images?.length ? product.images : [product.primaryImage || ''];
+  const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const activeImage = galleryImages[activeImageIdx] || galleryImages[0];
 
   const handleAddToCart = () => {
     addToCart(product, selectedSize, quantity);
@@ -132,14 +135,15 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onQuickView }) => 
       {/* 2. Main Product PDP Grid - Exact Match to Wireframe Panel 03 */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
-          {/* Left Column: Single Dedicated Image Showcase */}
+          {/* Left Column: Image Gallery */}
           <div className="lg:col-span-7">
             {/* Large Main Showcase Image */}
             <div className="relative aspect-square w-full bg-[#f4f2ee] border border-stone-200/80 overflow-hidden shadow-sm group">
               <img
-                src={productImage}
+                key={activeImage}
+                src={activeImage}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 animate-fadeIn"
               />
 
               {/* Wishlist Heart Icon on Top Right */}
@@ -159,6 +163,31 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ onQuickView }) => 
                 <Heart className={`w-5 h-5 ${isFavorited ? 'fill-current' : ''}`} />
               </button>
             </div>
+
+            {/* Thumbnail Strip */}
+            {galleryImages.length > 1 && (
+              <div className="flex gap-3 mt-4">
+                {galleryImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIdx(idx)}
+                    className={`relative w-20 h-20 border-2 overflow-hidden bg-[#f4f2ee] transition-all duration-200 flex-shrink-0 ${
+                      activeImageIdx === idx
+                        ? 'border-[#111111] shadow-md'
+                        : 'border-stone-200 hover:border-stone-400'
+                    }`}
+                    aria-label={`View image ${idx + 1}`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${product.name} view ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Contiguous Purchase Module */}

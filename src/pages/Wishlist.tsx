@@ -107,7 +107,7 @@ export const Wishlist: React.FC = () => {
                   </button>
 
                   <img
-                    src={product.images?.[0] || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+                    src={product.images?.[0] || '/product-placeholder.svg'}
                     alt={product.name}
                     className="w-16 h-16 sm:w-20 sm:h-20 object-cover bg-stone-100 shrink-0 border border-stone-200"
                   />

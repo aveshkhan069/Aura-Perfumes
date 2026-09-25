@@ -69,14 +69,47 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
               </button>
             </div>
 
-            {/* Brand Logo (Single element wordmark) */}
-            <Link to="/" className="flex flex-col items-center sm:items-start group">
-              <span className="font-serif-luxury text-2xl sm:text-3xl tracking-[0.25em] font-medium text-white group-hover:text-[#c5a880] transition-colors uppercase">
-                AURA
-              </span>
-              <span className="text-[9px] tracking-[0.35em] text-[#c5a880] uppercase -mt-1 font-sans">
-                PERFUMES
-              </span>
+            {/* Brand Logo — Inline SVG mark + wordmark */}
+            <Link to="/" className="flex items-center gap-2.5 group" aria-label="AURA Perfumes – Home">
+              {/* Flame icon mark */}
+              <svg
+                width="28"
+                height="36"
+                viewBox="0 0 28 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="flex-shrink-0 transition-transform duration-500 group-hover:scale-110"
+                aria-hidden="true"
+              >
+                <defs>
+                  <linearGradient id="hFlame" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%"   stopColor="#f0e0c0"/>
+                    <stop offset="55%"  stopColor="#c5a880"/>
+                    <stop offset="100%" stopColor="#8a6d42"/>
+                  </linearGradient>
+                </defs>
+                {/* Outer flame */}
+                <path
+                  d="M14 1 C14 1 3 13 3 21 C3 28.2 7.9 33.5 14 35 C20.1 33.5 25 28.2 25 21 C25 13 14 1 14 1Z"
+                  fill="url(#hFlame)"
+                />
+                {/* Inner cutout for depth/glow */}
+                <path
+                  d="M14 9 C14 9 9.5 17 9.5 21.5 C9.5 24.5 11.4 26.5 14 27.5 C16.6 26.5 18.5 24.5 18.5 21.5 C18.5 17 14 9 14 9Z"
+                  fill="#111111"
+                  opacity="0.45"
+                />
+              </svg>
+
+              {/* Text portion */}
+              <div className="flex flex-col leading-none">
+                <span className="font-serif-luxury text-[1.6rem] tracking-[0.22em] font-semibold text-white group-hover:text-[#c5a880] transition-colors duration-300 uppercase">
+                  AURA
+                </span>
+                <span className="text-[8px] tracking-[0.4em] text-[#c5a880] uppercase font-sans mt-0.5 opacity-80">
+                  PARFUMS DE LUXE
+                </span>
+              </div>
             </Link>
 
             {/* Desktop Navigation Links */}

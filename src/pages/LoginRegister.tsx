@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -7,20 +7,31 @@ import { useToast } from '../context/ToastContext';
 export const LoginRegister: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login, register, isAuthenticated, user } = useAuth();
+  const { login, register, signInWithGoogle, isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
   const isRegisterRoute = location.pathname === '/register';
   const [isRegister, setIsRegister] = useState(isRegisterRoute);
 
   // Form states
-  const [email, setEmail] = useState('aveshkhan069@gmail.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsRegister(isRegisterRoute);
+  }, [isRegisterRoute]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const destination = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
+      navigate(destination || '/account', { replace: true });
+    }
+  }, [isAuthenticated, location.state, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,11 +48,21 @@ export const LoginRegister: React.FC = () => {
         setIsLoading(false);
         return;
       }
+      if (password.length < 8) {
+        showToast('Use a password with at least 8 characters', 'error');
+        setIsLoading(false);
+        return;
+      }
+      if (!acceptedTerms) {
+        showToast('Please accept the terms to create your account', 'error');
+        setIsLoading(false);
+        return;
+      }
       const res = await register(name, email, password);
       setIsLoading(false);
       if (res.success) {
         showToast(res.message);
-        navigate('/account');
+        navigate(res.message.toLowerCase().includes('check your email') ? '/login' : '/account');
       } else {
         showToast(res.message, 'error');
       }
@@ -50,18 +71,19 @@ export const LoginRegister: React.FC = () => {
       setIsLoading(false);
       if (res.success) {
         showToast(res.message);
-        navigate('/account');
+        const destination = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
+        navigate(destination || '/account', { replace: true });
       } else {
         showToast(res.message, 'error');
       }
     }
   };
 
-  const handleOAuthDemo = (provider: string) => {
-    showToast(`Signing in via ${provider}...`);
-    login(`${provider.toLowerCase()}user@auraperfumes.com`, 'oauthDemoPass').then(() => {
-      navigate('/account');
-    });
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    const res = await signInWithGoogle();
+    setIsLoading(false);
+    if (!res.success) showToast(res.message, 'error');
   };
 
   return (
@@ -82,11 +104,12 @@ export const LoginRegister: React.FC = () => {
             </div>
 
             <h2 className="font-serif-luxury text-3xl sm:text-4xl font-medium tracking-tight leading-snug">
-              Welcome Back
+              {isRegister ? 'Join the Inner Circle' : 'Welcome Back'}
             </h2>
             <p className="text-xs text-stone-300 font-light mt-2 leading-relaxed">
-              Sign in to your account and continue your private fragrance journey. Track orders,
-              curate your wishlist, and unlock inner circle privileges.
+              {isRegister
+                ? 'Create your AURA account to save beloved fragrances, manage your orders, and enjoy a more personal journey.'
+                : 'Sign in to your account and continue your private fragrance journey. Track orders, curate your wishlist, and unlock inner circle privileges.'}
             </p>
           </div>
 
@@ -171,6 +194,7 @@ export const LoginRegister: React.FC = () => {
               <label className="block text-xs uppercase tracking-wider font-semibold text-stone-800 mb-1">
                 Password
               </label>
+              {isRegister && <p className="text-[11px] text-stone-500 mb-1.5">Use at least 8 characters.</p>}
               <div className="relative">
                 <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -210,24 +234,24 @@ export const LoginRegister: React.FC = () => {
               </div>
             )}
 
+            {isRegister && (
+              <label className="flex items-start gap-2 text-xs text-stone-600 leading-relaxed">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="mt-0.5 accent-black"
+                />
+                <span>I agree to the terms of service and privacy policy.</span>
+              </label>
+            )}
+
             {!isRegister && (
               <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 cursor-pointer text-stone-600">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="accent-black"
-                  />
-                  <span>Remember me</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => showToast('Password reset link sent to your email address', 'info')}
-                  className="text-stone-500 hover:text-black underline cursor-pointer"
-                >
+                <span className="text-stone-500">Your session stays securely signed in on this device.</span>
+                <Link to="/forgot-password" className="text-stone-500 hover:text-black underline">
                   Forgot password?
-                </button>
+                </Link>
               </div>
             )}
 
@@ -250,8 +274,9 @@ export const LoginRegister: React.FC = () => {
           <div className="space-y-2.5">
             <button
               type="button"
-              onClick={() => handleOAuthDemo('Google')}
-              className="w-full border border-stone-300 hover:border-black bg-white text-stone-800 text-xs font-semibold py-2.5 px-4 flex items-center justify-center gap-3 transition-colors cursor-pointer"
+              onClick={() => void handleGoogleSignIn()}
+              disabled={isLoading}
+              className="w-full border border-stone-300 hover:border-black bg-white text-stone-800 text-xs font-semibold py-2.5 px-4 flex items-center justify-center gap-3 transition-colors cursor-pointer disabled:opacity-50"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -274,16 +299,6 @@ export const LoginRegister: React.FC = () => {
               <span>Continue with Google</span>
             </button>
 
-            <button
-              type="button"
-              onClick={() => handleOAuthDemo('Facebook')}
-              className="w-full border border-stone-300 hover:border-black bg-white text-stone-800 text-xs font-semibold py-2.5 px-4 flex items-center justify-center gap-3 transition-colors cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-[#1877F2]" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-              <span>Continue with Facebook</span>
-            </button>
           </div>
 
           <div className="mt-8 text-center text-xs text-stone-500">

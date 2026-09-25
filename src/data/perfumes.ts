@@ -63,7 +63,7 @@ export const initialReviews: Review[] = [
   }
 ];
 
-export const productsData: Product[] = [
+const productCatalog: Product[] = [
   {
     id: 'aura-noir',
     slug: 'aura-noir-eau-de-parfum',
@@ -93,8 +93,12 @@ export const productsData: Product[] = [
     season: 'Autumn / Winter / Evening',
     occasion: 'Formal, Date Night, Black Tie',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Limonene, Linalool, Coumarin, Citronellol, Geraniol.',
-    primaryImage: '/src/assets/images/cinematic_hero_bottle_1790350556748.jpg',
-    images: ['/src/assets/images/cinematic_hero_bottle_1790350556748.jpg'],
+    primaryImage: '/src/assets/images/products/aura-noir_1.jpg',
+    images: [
+      '/src/assets/images/products/aura-noir_1.jpg',
+      '/src/assets/images/products/aura-noir_2.jpg',
+      '/src/assets/images/products/aura-noir_3.jpg'
+    ],
     stock: 42,
     isBestseller: true,
     isNewArrival: false,
@@ -129,8 +133,12 @@ export const productsData: Product[] = [
     season: 'All Seasons / Spring & Evening',
     occasion: 'Romantic Dinners, Weddings, Signature Daily',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Alpha-Isomethyl Ionone, Hydroxycitronellal, Eugenol, Benzyl Salicylate.',
-    primaryImage: '/src/assets/images/category_women_perfume_1790347565593.jpg',
-    images: ['/src/assets/images/category_women_perfume_1790347565593.jpg'],
+    primaryImage: '/src/assets/images/products/velvet-rose_1.jpg',
+    images: [
+      '/src/assets/images/products/velvet-rose_1.jpg',
+      '/src/assets/images/products/velvet-rose_2.jpg',
+      '/src/assets/images/products/velvet-rose_3.jpg'
+    ],
     stock: 28,
     isBestseller: true,
     isNewArrival: false,
@@ -165,8 +173,12 @@ export const productsData: Product[] = [
     season: 'Spring / Summer / Daytime',
     occasion: 'Daily Workwear, Weekend Brunch, Vacations',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Limonene, Aqua (Water), Linalool, Citral, Farnesol.',
-    primaryImage: '/src/assets/images/perfume_citrus_fresh_1790350817079.jpg',
-    images: ['/src/assets/images/perfume_citrus_fresh_1790350817079.jpg'],
+    primaryImage: '/src/assets/images/products/citrus-dream_1.jpg',
+    images: [
+      '/src/assets/images/products/citrus-dream_1.jpg',
+      '/src/assets/images/products/citrus-dream_2.jpg',
+      '/src/assets/images/products/citrus-dream_3.jpg'
+    ],
     stock: 55,
     isBestseller: true,
     isNewArrival: false,
@@ -201,8 +213,12 @@ export const productsData: Product[] = [
     season: 'Spring / Summer',
     occasion: 'Sport, Casual Day, Outdoor Gatherings',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Benzyl Benzoate, Limonene, Evernia Prunastri Extract.',
-    primaryImage: '/src/assets/images/category_men_perfume_1790347553937.jpg',
-    images: ['/src/assets/images/category_men_perfume_1790347553937.jpg'],
+    primaryImage: '/src/assets/images/products/ocean-breeze_1.jpg',
+    images: [
+      '/src/assets/images/products/ocean-breeze_1.jpg',
+      '/src/assets/images/products/ocean-breeze_2.jpg',
+      '/src/assets/images/products/ocean-breeze_3.jpg'
+    ],
     stock: 36,
     isBestseller: true,
     isNewArrival: false,
@@ -237,8 +253,12 @@ export const productsData: Product[] = [
     season: 'All Seasons / Daytime',
     occasion: 'High Tea, Office, Everyday Elegance',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Hexyl Cinnamal, Citronellol, Coumarin.',
-    primaryImage: '/src/assets/images/perfume_blush_floral_1790350706637.jpg',
-    images: ['/src/assets/images/perfume_blush_floral_1790350706637.jpg'],
+    primaryImage: '/src/assets/images/products/blush_1.jpg',
+    images: [
+      '/src/assets/images/products/blush_1.jpg',
+      '/src/assets/images/products/blush_2.jpg',
+      '/src/assets/images/products/blush_3.jpg'
+    ],
     stock: 45,
     isBestseller: true,
     isNewArrival: true,
@@ -273,8 +293,12 @@ export const productsData: Product[] = [
     season: 'Autumn / Winter',
     occasion: 'Royal Gala, Celebrations, Winter Evenings',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Cinnamyl Alcohol, Isoeugenol, Farnesol.',
-    primaryImage: '/src/assets/images/perfume_mystic_oud_1790350694190.jpg',
-    images: ['/src/assets/images/perfume_mystic_oud_1790350694190.jpg'],
+    primaryImage: '/src/assets/images/products/mystic-oud_1.jpg',
+    images: [
+      '/src/assets/images/products/mystic-oud_1.jpg',
+      '/src/assets/images/products/mystic-oud_2.jpg',
+      '/src/assets/images/products/mystic-oud_3.jpg'
+    ],
     stock: 19,
     isBestseller: true,
     isNewArrival: false,
@@ -309,8 +333,12 @@ export const productsData: Product[] = [
     season: 'Versatile / All Seasons',
     occasion: 'Signature Everyday, Night Out, High Impact',
     ingredients: 'Alcohol, Aqua, Parfum, Limonene, Linalool, Ethylhexyl Methoxycinnamate, Citronellol, Coumarin.',
-    primaryImage: '/src/assets/images/perfume_sauvage_dark_1790350720060.jpg',
-    images: ['/src/assets/images/perfume_sauvage_dark_1790350720060.jpg'],
+    primaryImage: '/src/assets/images/products/dior-sauvage_1.jpg',
+    images: [
+      '/src/assets/images/products/dior-sauvage_1.jpg',
+      '/src/assets/images/products/dior-sauvage_2.jpg',
+      '/src/assets/images/products/dior-sauvage_3.jpg'
+    ],
     stock: 24,
     isBestseller: true,
     isNewArrival: false,
@@ -345,8 +373,12 @@ export const productsData: Product[] = [
     season: 'All Seasons',
     occasion: 'Executive Meetings, Fine Dining, Black Tie',
     ingredients: 'Alcohol, Parfum (Fragrance), Aqua (Water), Limonene, Linalool, Citronellol, Alpha-Isomethyl Ionone.',
-    primaryImage: '/src/assets/images/perfume_bleu_royal_1790350806128.jpg',
-    images: ['/src/assets/images/perfume_bleu_royal_1790350806128.jpg'],
+    primaryImage: '/src/assets/images/products/bleu-de-chanel_1.jpg',
+    images: [
+      '/src/assets/images/products/bleu-de-chanel_1.jpg',
+      '/src/assets/images/products/bleu-de-chanel_2.jpg',
+      '/src/assets/images/products/bleu-de-chanel_3.jpg'
+    ],
     stock: 18,
     isBestseller: true,
     isNewArrival: false,
@@ -381,8 +413,12 @@ export const productsData: Product[] = [
     season: 'All Seasons',
     occasion: 'Signature Daily, Executive, Glamorous Evenings',
     ingredients: 'Alcohol, Parfum (Fragrance), Aqua (Water), Linalool, Limonene, Benzyl Salicylate, Geraniol.',
-    primaryImage: '/src/assets/images/perfume_coco_crystal_1790350732832.jpg',
-    images: ['/src/assets/images/perfume_coco_crystal_1790350732832.jpg'],
+    primaryImage: '/src/assets/images/products/chanel-coco-mademoiselle_1.jpg',
+    images: [
+      '/src/assets/images/products/chanel-coco-mademoiselle_1.jpg',
+      '/src/assets/images/products/chanel-coco-mademoiselle_2.jpg',
+      '/src/assets/images/products/chanel-coco-mademoiselle_3.jpg'
+    ],
     stock: 22,
     isBestseller: true,
     isNewArrival: false,
@@ -410,15 +446,19 @@ export const productsData: Product[] = [
     topNotes: ['Rare Oud Wood', 'Rosewood', 'Cardamom'],
     heartNotes: ['Sichuan Pepper', 'Sandalwood', 'Vetiver'],
     baseNotes: ['Tonka Bean', 'Vanilla', 'Amber'],
-    description: 'One of the most rare, precious, and expensive ingredients in a perfumer’s arsenal, oud wood is often burned in incense-filled temples. Exotic rosewood and cardamom give way to a smoky blend of rare oud wood, sandalwood and vetiver.',
+    description: 'One of the most rare, precious, and expensive ingredients in a perfumer\'s arsenal, oud wood is often burned in incense-filled temples. Exotic rosewood and cardamom give way to a smoky blend of rare oud wood, sandalwood and vetiver.',
     shortDescription: 'Ultra-exclusive private blend showcasing smoky agarwood, cardamom, and creamy sandalwood.',
     longevity: '8-10 Hours',
     sillage: 'Subtle & Intimate Luxury',
     season: 'Autumn / Winter',
     occasion: 'VIP Events, Private Dinners, Connoisseur Wear',
     ingredients: 'Alcohol Denat., Fragrance (Parfum), Water\\Aqua\\Eau, Linalool, Hydroxycitronellal, Coumarin, Limonene.',
-    primaryImage: '/src/assets/images/perfume_oud_architectural_1790350744859.jpg',
-    images: ['/src/assets/images/perfume_oud_architectural_1790350744859.jpg'],
+    primaryImage: '/src/assets/images/products/tom-ford-oud-wood_1.jpg',
+    images: [
+      '/src/assets/images/products/tom-ford-oud-wood_1.jpg',
+      '/src/assets/images/products/tom-ford-oud-wood_2.jpg',
+      '/src/assets/images/products/tom-ford-oud-wood_3.jpg'
+    ],
     stock: 12,
     isBestseller: false,
     isNewArrival: true,
@@ -453,8 +493,12 @@ export const productsData: Product[] = [
     season: 'All Seasons / Night',
     occasion: 'Clubs, Parties, Social Gatherings',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Limonene, Coumarin, Linalool, Ethylhexyl Methoxycinnamate.',
-    primaryImage: '/src/assets/images/perfume_bleu_royal_1790350806128.jpg',
-    images: ['/src/assets/images/perfume_bleu_royal_1790350806128.jpg'],
+    primaryImage: '/src/assets/images/products/versace-eros_1.jpg',
+    images: [
+      '/src/assets/images/products/versace-eros_1.jpg',
+      '/src/assets/images/products/versace-eros_2.jpg',
+      '/src/assets/images/products/versace-eros_3.jpg'
+    ],
     stock: 30,
     isBestseller: true,
     isNewArrival: false,
@@ -489,8 +533,12 @@ export const productsData: Product[] = [
     season: 'Summer / Spring',
     occasion: 'Office, Weekend Casual, Beach Holidays',
     ingredients: 'Alcohol, Aqua, Parfum, BHT, Linalool, Geraniol, Eugenol, Alpha-Isomethyl Ionone.',
-    primaryImage: '/src/assets/images/category_men_perfume_1790347553937.jpg',
-    images: ['/src/assets/images/category_men_perfume_1790347553937.jpg'],
+    primaryImage: '/src/assets/images/products/armani-acqua-di-gio_1.jpg',
+    images: [
+      '/src/assets/images/products/armani-acqua-di-gio_1.jpg',
+      '/src/assets/images/products/armani-acqua-di-gio_2.jpg',
+      '/src/assets/images/products/armani-acqua-di-gio_3.jpg'
+    ],
     stock: 25,
     isBestseller: false,
     isNewArrival: false,
@@ -518,15 +566,19 @@ export const productsData: Product[] = [
     topNotes: ['Blackcurrant', 'Pear'],
     heartNotes: ['Iris Pallida', 'Jasmine Sambac', 'Orange Blossom'],
     baseNotes: ['Praline', 'Vanilla', 'Patchouli', 'Tonka Bean'],
-    description: 'A universal declaration to the beauty of life. Created by three of France’s leading perfumers, it features a noble iris base enveloped in delicious sweet praline and patchouli.',
+    description: 'A universal declaration to the beauty of life. Created by three of France\'s leading perfumers, it features a noble iris base enveloped in delicious sweet praline and patchouli.',
     shortDescription: 'A luminous gourmand statement celebrating the joy of living with rich iris and sweet praline.',
     longevity: '10-12 Hours',
     sillage: 'Strong & Radiant',
     season: 'Autumn / Winter',
     occasion: 'Celebrations, Festive Parties, Evenings',
     ingredients: 'Alcohol, Parfum/Fragrance, Aqua/Water, Linalool, Benzyl Salicylate, Limonene, Methyl Anthranilate.',
-    primaryImage: '/src/assets/images/category_women_perfume_1790347565593.jpg',
-    images: ['/src/assets/images/category_women_perfume_1790347565593.jpg'],
+    primaryImage: '/src/assets/images/products/lancome-la-vie-est-belle_1.jpg',
+    images: [
+      '/src/assets/images/products/lancome-la-vie-est-belle_1.jpg',
+      '/src/assets/images/products/lancome-la-vie-est-belle_2.jpg',
+      '/src/assets/images/products/lancome-la-vie-est-belle_3.jpg'
+    ],
     stock: 33,
     isBestseller: true,
     isNewArrival: false,
@@ -561,8 +613,12 @@ export const productsData: Product[] = [
     season: 'Autumn / Winter / Night',
     occasion: 'Clubbing, Night Out, Bold Impressions',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Coumarin, Hydroxycitronellal, Linalool, Limonene.',
-    primaryImage: '/src/assets/images/perfume_blush_floral_1790350706637.jpg',
-    images: ['/src/assets/images/perfume_blush_floral_1790350706637.jpg'],
+    primaryImage: '/src/assets/images/products/good-girl_1.jpg',
+    images: [
+      '/src/assets/images/products/good-girl_1.jpg',
+      '/src/assets/images/products/good-girl_2.jpg',
+      '/src/assets/images/products/good-girl_3.jpg'
+    ],
     stock: 20,
     isBestseller: false,
     isNewArrival: true,
@@ -597,8 +653,12 @@ export const productsData: Product[] = [
     season: 'All Seasons',
     occasion: 'Office Power Moves, Date Nights, Signature Scent',
     ingredients: 'Alcohol, Parfum/Fragrance, Aqua/Water, Limonene, Linalool, Butyl Methoxydibenzoylmethane.',
-    primaryImage: '/src/assets/images/perfume_sauvage_dark_1790350720060.jpg',
-    images: ['/src/assets/images/perfume_sauvage_dark_1790350720060.jpg'],
+    primaryImage: '/src/assets/images/products/ysl-y_1.jpg',
+    images: [
+      '/src/assets/images/products/ysl-y_1.jpg',
+      '/src/assets/images/products/ysl-y_2.jpg',
+      '/src/assets/images/products/ysl-y_3.jpg'
+    ],
     stock: 26,
     isBestseller: false,
     isNewArrival: true,
@@ -633,8 +693,12 @@ export const productsData: Product[] = [
     season: 'Autumn / Spring / Winter',
     occasion: 'Creative Workspaces, Art Galleries, Cozy Evenings',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Farnesol, Eugenol, Isoeugenol.',
-    primaryImage: '/src/assets/images/perfume_santal_sublime_1790350781216.jpg',
-    images: ['/src/assets/images/perfume_santal_sublime_1790350781216.jpg'],
+    primaryImage: '/src/assets/images/products/aura-santal-sublime_1.jpg',
+    images: [
+      '/src/assets/images/products/aura-santal-sublime_1.jpg',
+      '/src/assets/images/products/aura-santal-sublime_2.jpg',
+      '/src/assets/images/products/aura-santal-sublime_3.jpg'
+    ],
     stock: 40,
     isBestseller: false,
     isNewArrival: true,
@@ -669,8 +733,12 @@ export const productsData: Product[] = [
     season: 'Winter / Fall',
     occasion: 'Intimate Evenings, Gala Nights, Winter Holiday Parties',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Benzyl Cinnamate, Coumarin, Benzyl Alcohol.',
-    primaryImage: '/src/assets/images/perfume_golden_amber_1790350761045.jpg',
-    images: ['/src/assets/images/perfume_golden_amber_1790350761045.jpg'],
+    primaryImage: '/src/assets/images/products/aura-golden-amber_1.jpg',
+    images: [
+      '/src/assets/images/products/aura-golden-amber_1.jpg',
+      '/src/assets/images/products/aura-golden-amber_2.jpg',
+      '/src/assets/images/products/aura-golden-amber_3.jpg'
+    ],
     stock: 35,
     isBestseller: false,
     isNewArrival: true,
@@ -705,8 +773,12 @@ export const productsData: Product[] = [
     season: 'Spring / Summer',
     occasion: 'Morning Weddings, Garden Parties, Serene Days',
     ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water), Citronellol, Hydroxycitronellal.',
-    primaryImage: '/src/assets/images/perfume_fleur_blanche_1790350793505.jpg',
-    images: ['/src/assets/images/perfume_fleur_blanche_1790350793505.jpg'],
+    primaryImage: '/src/assets/images/products/aura-fleur-blanche_1.jpg',
+    images: [
+      '/src/assets/images/products/aura-fleur-blanche_1.jpg',
+      '/src/assets/images/products/aura-fleur-blanche_2.jpg',
+      '/src/assets/images/products/aura-fleur-blanche_3.jpg'
+    ],
     stock: 29,
     isBestseller: false,
     isNewArrival: false,
@@ -741,8 +813,12 @@ export const productsData: Product[] = [
     season: 'All Seasons',
     occasion: 'Signature, Power Meetings, Milestone Celebrations',
     ingredients: 'Alcool (Alcohol), Parfum (Fragrance), Aqua (Water), Limonene, Linalool, Citral, Citronellol.',
-    primaryImage: '/src/assets/images/perfume_sauvage_dark_1790350720060.jpg',
-    images: ['/src/assets/images/perfume_sauvage_dark_1790350720060.jpg'],
+    primaryImage: '/src/assets/images/products/creed-aventus_1.jpg',
+    images: [
+      '/src/assets/images/products/creed-aventus_1.jpg',
+      '/src/assets/images/products/creed-aventus_2.jpg',
+      '/src/assets/images/products/creed-aventus_3.jpg'
+    ],
     stock: 8,
     isBestseller: true,
     isNewArrival: false,
@@ -777,11 +853,23 @@ export const productsData: Product[] = [
     season: 'Autumn / Spring',
     occasion: 'Intimate Gatherings, Weekend Strolls, Creative Work',
     ingredients: 'Alcohol, Parfum (Fragrance), Aqua (Water), Limonene, Linalool, Citral, Geraniol.',
-    primaryImage: '/src/assets/images/perfume_santal_sublime_1790350781216.jpg',
-    images: ['/src/assets/images/perfume_santal_sublime_1790350781216.jpg'],
+    primaryImage: '/src/assets/images/products/byredo-gypsy-water_1.jpg',
+    images: [
+      '/src/assets/images/products/byredo-gypsy-water_1.jpg',
+      '/src/assets/images/products/byredo-gypsy-water_2.jpg',
+      '/src/assets/images/products/byredo-gypsy-water_3.jpg'
+    ],
     stock: 15,
     isBestseller: false,
     isNewArrival: true,
     isFeatured: false
   }
 ];
+
+// Hide only the two products requested because their displayed images are unsuitable.
+export const productsData: Product[] = productCatalog
+  .filter((product) => !['lancome-la-vie-est-belle', 'good-girl', 'creed-aventus'].includes(product.id))
+  .map((product) => ({
+    ...product,
+    images: product.images.filter((_, index) => index !== 1),
+  }));

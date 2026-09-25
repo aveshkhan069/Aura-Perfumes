@@ -58,7 +58,7 @@ let orders: Order[] = [
         size: '100ml',
         price: 1999,
         quantity: 1,
-        image: '/src/assets/images/hero_aura_perfume_1790347541852.jpg'
+        image: '/src/assets/images/products/aura-noir_1.jpg'
       },
       {
         productId: 'citrus-dream',
@@ -67,7 +67,7 @@ let orders: Order[] = [
         size: '50ml',
         price: 1799,
         quantity: 1,
-        image: '/src/assets/images/category_unisex_perfume_1790347576595.jpg'
+        image: '/src/assets/images/products/citrus-dream_1.jpg'
       }
     ],
     shippingAddress: {
@@ -420,7 +420,7 @@ app.post('/api/admin/products', (req, res) => {
     ...req.body,
     id: req.body.id || `aura-${Date.now()}`,
     slug: req.body.slug || req.body.name.toLowerCase().replace(/\s+/g, '-'),
-    images: req.body.images?.length ? req.body.images : ['/src/assets/images/hero_aura_perfume_1790347541852.jpg'],
+    images: req.body.images?.length ? req.body.images : [],
     rating: req.body.rating || 5.0,
     reviewCount: req.body.reviewCount || 1
   };

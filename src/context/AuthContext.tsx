@@ -1,140 +1,260 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, ShippingAddress } from '../types';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { getFriendlyAuthError } from '../lib/supabaseErrors';
+import { ShippingAddress, User } from '../types';
+
+interface AuthResult {
+  success: boolean;
+  message: string;
+}
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
-  register: (name: string, email: string, password: string) => Promise<{ success: boolean; message: string }>;
-  logout: () => void;
-  updateUserAddresses: (address: ShippingAddress) => void;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<AuthResult>;
+  register: (name: string, email: string, password: string) => Promise<AuthResult>;
+  signInWithGoogle: () => Promise<AuthResult>;
+  requestPasswordReset: (email: string) => Promise<AuthResult>;
+  updatePassword: (password: string) => Promise<AuthResult>;
+  updateProfile: (name: string, phone: string) => Promise<AuthResult>;
+  logout: () => Promise<void>;
+  updateUserAddresses: (address: ShippingAddress) => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function mapAuthUser(authUser: SupabaseUser, profile?: Record<string, unknown> | null, savedAddresses: ShippingAddress[] = []): User {
+  const metadataName = typeof authUser.user_metadata?.full_name === 'string'
+    ? authUser.user_metadata.full_name
+    : '';
+
+  return {
+    id: authUser.id,
+    name: typeof profile?.full_name === 'string' && profile.full_name
+      ? profile.full_name
+      : metadataName || authUser.email?.split('@')[0] || 'AURA Client',
+    email: authUser.email || '',
+    phone: typeof profile?.phone === 'string' ? profile.phone : '',
+    avatarUrl: typeof profile?.avatar_url === 'string' ? profile.avatar_url : undefined,
+    role: profile?.role === 'admin' ? 'admin' : 'customer',
+    joinedDate: new Date(authUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    savedAddresses,
+  };
+}
+
+function mapAddress(row: Record<string, unknown>, email: string): ShippingAddress {
+  return {
+    fullName: String(row.full_name || ''),
+    phone: String(row.phone || ''),
+    email,
+    address: String(row.address_line_1 || ''),
+    apartment: String(row.address_line_2 || ''),
+    city: String(row.city || ''),
+    state: String(row.state || ''),
+    pinCode: String(row.postal_code || ''),
+    country: String(row.country || 'India'),
+  };
+}
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    try {
-      const saved = localStorage.getItem('aura_user');
-      if (saved) return JSON.parse(saved);
-      // Default initial mock logged-in customer for effortless evaluation
-      return {
-        id: 'user-1',
-        name: 'Avesh Khan',
-        email: 'aveshkhan069@gmail.com',
-        role: 'customer',
-        joinedDate: 'January 2026',
-        savedAddresses: [
-          {
-            fullName: 'Avesh Khan',
-            phone: '+91 98765 43210',
-            email: 'aveshkhan069@gmail.com',
-            address: '42, Hill Road, Bandra West',
-            apartment: 'Apt 4B, Sea View Towers',
-            city: 'Mumbai',
-            state: 'Maharashtra',
-            pinCode: '400050',
-            country: 'India'
-          }
-        ]
-      };
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadProfile = useCallback(async (authUser: SupabaseUser) => {
+    if (!supabase) return;
+
+    const [profileResult, addressResult] = await Promise.all([
+      supabase.from('profiles').select('full_name, role, phone, avatar_url').eq('id', authUser.id).maybeSingle(),
+      supabase.from('addresses')
+        .select('full_name, phone, address_line_1, address_line_2, city, state, postal_code, country, is_default, created_at')
+        .eq('user_id', authUser.id)
+        .order('is_default', { ascending: false })
+        .order('created_at', { ascending: false }),
+    ]);
+
+    const addresses = (addressResult.data || []).map((address) =>
+      mapAddress(address as Record<string, unknown>, authUser.email || '')
+    );
+    setUser(mapAuthUser(authUser, profileResult.data as Record<string, unknown> | null, addresses));
+  }, []);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('aura_user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('aura_user');
+    const client = supabase;
+    if (!client) {
+      setIsLoading(false);
+      return;
     }
-  }, [user]);
 
-  const login = async (email: string, password: string) => {
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (data.success && data.user) {
-        setUser(data.user);
-        return { success: true, message: data.message };
-      } else {
-        return { success: false, message: data.message || 'Login failed' };
+    let active = true;
+    const initialize = async () => {
+      const { data, error } = await client.auth.getSession();
+      if (!active) return;
+      if (error) {
+        setUser(null);
+      } else if (data.session?.user) {
+        await loadProfile(data.session.user);
       }
-    } catch {
-      // Fallback client simulation
-      const role = email.toLowerCase().includes('admin') ? 'admin' : 'customer';
-      const dummyUser: User = {
-        id: `user-${Date.now()}`,
-        name: email.split('@')[0],
-        email,
-        role: role as 'admin' | 'customer',
-        joinedDate: 'March 2026',
-      };
-      setUser(dummyUser);
-      return { success: true, message: 'Signed in successfully' };
+      if (active) setIsLoading(false);
+    };
+
+    void initialize();
+    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+      if (!active) return;
+      if (session?.user) {
+        setUser(mapAuthUser(session.user));
+        window.setTimeout(() => {
+          if (active) void loadProfile(session.user);
+        }, 0);
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, [loadProfile]);
+
+  const login = async (email: string, password: string): Promise<AuthResult> => {
+    if (!supabase || !isSupabaseConfigured) {
+      return { success: false, message: 'Sign-in is temporarily unavailable. Please try again later.' };
     }
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    return error
+      ? { success: false, message: getFriendlyAuthError(error, 'We could not sign you in. Please try again.') }
+      : { success: true, message: 'Welcome back to AURA Perfumes.' };
   };
 
-  const register = async (name: string, email: string, password: string) => {
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (data.success && data.user) {
-        setUser(data.user);
-        return { success: true, message: data.message };
-      } else {
-        return { success: false, message: data.message || 'Registration failed' };
-      }
-    } catch {
-      const dummyUser: User = {
-        id: `user-${Date.now()}`,
-        name,
-        email,
-        role: 'customer',
-        joinedDate: 'March 2026',
-      };
-      setUser(dummyUser);
-      return { success: true, message: 'Account registered successfully' };
+  const register = async (name: string, email: string, password: string): Promise<AuthResult> => {
+    if (!supabase || !isSupabaseConfigured) {
+      return { success: false, message: 'Registration is temporarily unavailable. Please try again later.' };
     }
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: { data: { full_name: name.trim() } },
+    });
+    if (error) {
+      if (import.meta.env.DEV) {
+        console.error('[AURA auth] Sign-up failed', {
+          code: error.code,
+          status: error.status,
+          message: error.message,
+        });
+      }
+      return { success: false, message: getFriendlyAuthError(error, 'We could not create your account. Please try again.') };
+    }
+    return {
+      success: true,
+      message: data.session ? 'Your AURA account is ready.' : 'Please check your email to verify your new account.',
+    };
   };
 
-  const logout = () => {
+  const signInWithGoogle = async (): Promise<AuthResult> => {
+    if (!supabase || !isSupabaseConfigured) {
+      return { success: false, message: 'Social sign-in is temporarily unavailable.' };
+    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/account` },
+    });
+    return error
+      ? { success: false, message: getFriendlyAuthError(error, 'Google sign-in is unavailable right now.') }
+      : { success: true, message: 'Continuing with Google…' };
+  };
+
+  const requestPasswordReset = async (email: string): Promise<AuthResult> => {
+    if (!supabase || !isSupabaseConfigured) {
+      return { success: false, message: 'Password recovery is temporarily unavailable.' };
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return error
+      ? { success: false, message: getFriendlyAuthError(error, 'We could not send a recovery email. Please try again.') }
+      : { success: true, message: 'If an account exists for that email, a recovery link is on its way.' };
+  };
+
+  const updatePassword = async (password: string): Promise<AuthResult> => {
+    if (!supabase || !isSupabaseConfigured) {
+      return { success: false, message: 'Password updates are temporarily unavailable.' };
+    }
+    const { error } = await supabase.auth.updateUser({ password });
+    return error
+      ? { success: false, message: getFriendlyAuthError(error, 'We could not update your password. Please try again.') }
+      : { success: true, message: 'Your password has been updated securely.' };
+  };
+
+  const updateProfile = async (name: string, phone: string): Promise<AuthResult> => {
+    if (!supabase || !user) return { success: false, message: 'Please sign in to update your profile.' };
+    const { error } = await supabase.from('profiles')
+      .update({ full_name: name.trim(), phone: phone.trim(), updated_at: new Date().toISOString() })
+      .eq('id', user.id);
+    if (error) return { success: false, message: 'We could not save your profile. Please try again.' };
+    setUser((current) => current ? { ...current, name: name.trim(), phone: phone.trim() } : current);
+    return { success: true, message: 'Your profile has been updated.' };
+  };
+
+  const updateUserAddresses = async (address: ShippingAddress): Promise<AuthResult> => {
+    if (!supabase || !user) return { success: false, message: 'Please sign in to save a delivery address.' };
+
+    const addressValues = {
+      full_name: address.fullName.trim(),
+      phone: address.phone.trim(),
+      address_line_1: address.address.trim(),
+      address_line_2: address.apartment?.trim() || null,
+      city: address.city.trim(),
+      state: address.state.trim(),
+      postal_code: address.pinCode.trim(),
+      country: address.country.trim() || 'India',
+      updated_at: new Date().toISOString(),
+    };
+    const { data: existing, error: lookupError } = await supabase.from('addresses')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('address_line_1', addressValues.address_line_1)
+      .eq('city', addressValues.city)
+      .maybeSingle();
+    if (lookupError) return { success: false, message: 'We could not save this address. Please try again.' };
+
+    const result = existing
+      ? await supabase.from('addresses').update(addressValues).eq('id', existing.id)
+      : await supabase.from('addresses').insert({ ...addressValues, user_id: user.id, is_default: !user.savedAddresses?.length });
+    if (result.error) return { success: false, message: 'We could not save this address. Please try again.' };
+
+    const savedAddresses = [address, ...(user.savedAddresses || []).filter((saved) =>
+      saved.address !== address.address || saved.city !== address.city
+    )];
+    setUser({ ...user, savedAddresses });
+    return { success: true, message: 'Your delivery address has been saved.' };
+  };
+
+  const logout = async () => {
+    if (supabase) await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('aura_user');
   };
 
-  const updateUserAddresses = (address: ShippingAddress) => {
-    if (!user) return;
-    const currentAddresses = user.savedAddresses || [];
-    const updated = [address, ...currentAddresses.filter(a => a.address !== address.address)];
-    setUser({ ...user, savedAddresses: updated });
-  };
+  const value = useMemo<AuthContextType>(() => ({
+    user,
+    isAuthenticated: Boolean(user),
+    isAdmin: user?.role === 'admin',
+    isLoading,
+    login,
+    register,
+    signInWithGoogle,
+    requestPasswordReset,
+    updatePassword,
+    updateProfile,
+    logout,
+    updateUserAddresses,
+  }), [user, isLoading]);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin',
-        login,
-        register,
-        logout,
-        updateUserAddresses,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

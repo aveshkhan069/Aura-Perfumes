@@ -10,6 +10,7 @@ import { CartDrawer } from './components/CartDrawer';
 import { QuickViewModal } from './components/QuickViewModal';
 import { SearchModal } from './components/SearchModal';
 import { ScrollToTop } from './components/ScrollToTop';
+import { AdminRoute, ProtectedRoute } from './components/ProtectedRoute';
 
 import { Home } from './pages/Home';
 import { Shop } from './pages/Shop';
@@ -17,6 +18,7 @@ import { ProductDetail } from './pages/ProductDetail';
 import { Cart } from './pages/Cart';
 import { Wishlist } from './pages/Wishlist';
 import { LoginRegister } from './pages/LoginRegister';
+import { ForgotPassword, ResetPassword } from './pages/PasswordRecovery';
 import { Checkout } from './pages/Checkout';
 import { OrderSuccess } from './pages/OrderSuccess';
 import { Account } from './pages/Account';
@@ -70,16 +72,22 @@ export default function App() {
                       element={<ProductDetail onQuickView={(p) => setQuickViewProduct(p)} />}
                     />
                     <Route path="/cart" element={<Cart />} />
-                    <Route path="/wishlist" element={<Wishlist />} />
                     <Route path="/login" element={<LoginRegister />} />
                     <Route path="/register" element={<LoginRegister />} />
-                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/order-success" element={<OrderSuccess />} />
-                    <Route path="/account" element={<Account />} />
-                    <Route path="/orders" element={<OrderHistory />} />
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/wishlist" element={<Wishlist />} />
+                      <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/account" element={<Account />} />
+                      <Route path="/orders" element={<OrderHistory />} />
+                    </Route>
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
-                    <Route path="/admin" element={<Admin />} />
+                    <Route element={<AdminRoute />}>
+                      <Route path="/admin" element={<Admin />} />
+                    </Route>
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>

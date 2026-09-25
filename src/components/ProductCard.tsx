@@ -24,7 +24,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const isFavorited = isInWishlist(product.id);
 
-  // Single dedicated product image only
+  // Keep product cards on the primary product image; alternate angles can look inconsistent on hover.
   const productImage = product.primaryImage || product.images?.[0] || '';
 
   const handleWishlistClick = (e: React.MouseEvent) => {
@@ -52,20 +52,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       style={{ transitionDelay: `${animationDelay}ms` }}
       className="group relative flex flex-col bg-white border border-stone-200/90 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-xl hover:-translate-y-1 select-none"
     >
-      {/* Image Container with Single Image & Smooth Scale on Hover */}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#f4f2ee]">
+      {/* Product Image */}
+      <div
+        className="relative aspect-square w-full overflow-hidden bg-[#f4f2ee]"
+      >
         <Link to={`/product/${product.id}`} className="block w-full h-full relative">
           {productImage ? (
-            <img
-              src={productImage}
-              alt={product.name}
-              referrerPolicy="no-referrer"
-              loading="lazy"
-              onLoad={() => setImageLoaded(true)}
-              className={`w-full h-full object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 ${
-                imageLoaded ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
+            <>
+              {/* Primary image */}
+              <img
+                src={productImage}
+                alt={product.name}
+                referrerPolicy="no-referrer"
+                loading="lazy"
+                onLoad={() => setImageLoaded(true)}
+                className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+            </>
           ) : (
             <div className="w-full h-full bg-[#f4f2ee] flex items-center justify-center">
               <span className="font-serif-luxury text-stone-400 text-base">{product.name}</span>

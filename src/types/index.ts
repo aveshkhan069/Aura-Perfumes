@@ -103,6 +103,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  avatarUrl?: string;
   role: 'customer' | 'admin';
   savedAddresses?: ShippingAddress[];
   joinedDate: string;

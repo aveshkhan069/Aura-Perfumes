@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="fg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#f0e0c0"/>
+      <stop offset="55%"  stop-color="#c5a880"/>
+      <stop offset="100%" stop-color="#8a6d42"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="32" height="32" rx="4" fill="#0d0d0d"/>
+  <!-- Flame mark -->
+  <path d="M16 3 C16 3 9 11 9 17 C9 22 12 25.5 16 27 C20 25.5 23 22 23 17 C23 11 16 3 16 3Z" fill="url(#fg)"/>
+  <!-- Inner cutout for depth -->
+  <path d="M16 9 C16 9 12.5 15 12.5 18.5 C12.5 21 14 22.5 16 23.5 C18 22.5 19.5 21 19.5 18.5 C19.5 15 16 9 16 9Z" fill="#0d0d0d" opacity="0.4"/>
+</svg>

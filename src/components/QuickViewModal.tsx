@@ -53,7 +53,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
         {/* Product Image */}
         <div className="relative aspect-square md:aspect-auto bg-[#f4f2ee] h-full flex items-center justify-center">
           <img
-            src={product.images?.[0] || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+            src={product.images?.[0] || '/product-placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover max-h-[460px]"
           />

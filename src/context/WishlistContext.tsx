@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Product } from '../types';
+import { useAuth } from './AuthContext';
 
 interface WishlistContextType {
   wishlist: Product[];
@@ -13,6 +14,8 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const previousUserId = useRef<string | null>(null);
   const [wishlist, setWishlist] = useState<Product[]>(() => {
     try {
       const saved = localStorage.getItem('aura_wishlist');
@@ -29,6 +32,15 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.error(e);
     }
   }, [wishlist]);
+
+  useEffect(() => {
+    if (isAuthLoading) return;
+    if (previousUserId.current && !user) {
+      setWishlist([]);
+      localStorage.removeItem('aura_wishlist');
+    }
+    previousUserId.current = user?.id || null;
+  }, [isAuthLoading, user]);
 
   const isInWishlist = (productId: string) => {
     return wishlist.some(item => item.id === productId);

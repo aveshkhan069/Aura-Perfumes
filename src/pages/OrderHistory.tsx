@@ -117,7 +117,7 @@ export const OrderHistory: React.FC = () => {
                     >
                       <div className="flex items-center gap-4">
                         <img
-                          src={item.image || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+                          src={item.image || '/product-placeholder.svg'}
                           alt={item.productName}
                           className="w-14 h-14 object-cover bg-stone-100 border border-stone-200 shrink-0"
                         />

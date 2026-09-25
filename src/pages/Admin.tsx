@@ -154,7 +154,7 @@ export const Admin: React.FC = () => {
         season: formData.season,
         occasion: formData.occasion,
         ingredients: 'Alcohol Denat., Parfum (Fragrance), Aqua (Water).',
-        images: ['/src/assets/images/hero_aura_perfume_1790347541852.jpg'],
+        images: [],
         stock: Number(formData.stock),
         isBestseller: false,
         isNewArrival: true,
@@ -311,7 +311,7 @@ export const Admin: React.FC = () => {
                     <tr key={p.id} className="hover:bg-stone-50/80 transition-colors">
                       <td className="p-3.5 flex items-center gap-3">
                         <img
-                          src={p.images?.[0] || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+                          src={p.images?.[0] || '/product-placeholder.svg'}
                           alt={p.name}
                           className="w-10 h-10 object-cover bg-stone-100 shrink-0 border border-stone-200"
                         />

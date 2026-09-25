@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Package, Heart, MapPin, Settings, LogOut, ArrowRight, ShieldCheck, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -7,38 +7,74 @@ import { useToast } from '../context/ToastContext';
 import { ShippingAddress } from '../types';
 
 export const Account: React.FC = () => {
-  const { user, logout, updateUserAddresses } = useAuth();
+  const { user, logout, updateUserAddresses, updateProfile, updatePassword } = useAuth();
   const { wishlistCount } = useWishlist();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'profile' | 'addresses' | 'settings'>('profile');
   const [isAddingAddress, setIsAddingAddress] = useState(false);
+  const [profileName, setProfileName] = useState(user?.name || '');
+  const [profilePhone, setProfilePhone] = useState(user?.phone || '');
+  const [newPassword, setNewPassword] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const [newAddress, setNewAddress] = useState<ShippingAddress>({
     fullName: user?.name || '',
-    phone: '+91 98765 43210',
+    phone: user?.phone || '',
     email: user?.email || '',
     address: '',
     apartment: '',
-    city: 'Mumbai',
-    state: 'Maharashtra',
+    city: '',
+    state: '',
     pinCode: '',
     country: 'India',
   });
 
-  const handleSaveAddress = (e: React.FormEvent) => {
+  useEffect(() => {
+    setProfileName(user?.name || '');
+    setProfilePhone(user?.phone || '');
+  }, [user?.name, user?.phone]);
+
+  const handleSaveAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAddress.address || !newAddress.pinCode) {
       showToast('Please fill out address fields', 'error');
       return;
     }
-    updateUserAddresses(newAddress);
+    setIsSaving(true);
+    const result = await updateUserAddresses(newAddress);
+    setIsSaving(false);
+    if (!result.success) {
+      showToast(result.message, 'error');
+      return;
+    }
     setIsAddingAddress(false);
-    showToast('New delivery address saved');
+    showToast(result.message);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    const result = await updateProfile(profileName, profilePhone);
+    setIsSaving(false);
+    showToast(result.message, result.success ? 'success' : 'error');
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      showToast('Choose a password with at least 8 characters.', 'error');
+      return;
+    }
+    setIsSaving(true);
+    const result = await updatePassword(newPassword);
+    setIsSaving(false);
+    showToast(result.message, result.success ? 'success' : 'error');
+    if (result.success) setNewPassword('');
+  };
+
+  const handleLogout = async () => {
+    await logout();
     showToast('Signed out of AURA account');
     navigate('/');
   };
@@ -158,7 +194,7 @@ export const Account: React.FC = () => {
                         Full Name
                       </span>
                       <strong className="text-stone-900 text-sm mt-0.5 block">
-                        {user?.name || 'Avesh Khan'}
+                        {user?.name || 'AURA Client'}
                       </strong>
                     </div>
 
@@ -167,7 +203,7 @@ export const Account: React.FC = () => {
                         Email Address
                       </span>
                       <strong className="text-stone-900 text-sm mt-0.5 block">
-                        {user?.email || 'aveshkhan069@gmail.com'}
+                        {user?.email || '—'}
                       </strong>
                     </div>
 
@@ -185,10 +221,27 @@ export const Account: React.FC = () => {
                         Registration Date
                       </span>
                       <strong className="text-stone-900 text-sm mt-0.5 block">
-                        {user?.joinedDate || 'January 2026'}
+                        {user?.joinedDate || '—'}
                       </strong>
                     </div>
                   </div>
+
+                  <form onSubmit={handleSaveProfile} className="pt-5 border-t border-stone-200 space-y-4">
+                    <h3 className="text-xs uppercase tracking-widest font-semibold text-stone-800">Edit personal details</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <label className="text-xs text-stone-600">
+                        Full name
+                        <input required value={profileName} onChange={(event) => setProfileName(event.target.value)} className="mt-1.5 w-full bg-[#faf9f5] border border-stone-300 px-3 py-2.5 text-stone-900 focus:outline-none focus:border-black" />
+                      </label>
+                      <label className="text-xs text-stone-600">
+                        Phone number
+                        <input type="tel" value={profilePhone} onChange={(event) => setProfilePhone(event.target.value)} className="mt-1.5 w-full bg-[#faf9f5] border border-stone-300 px-3 py-2.5 text-stone-900 focus:outline-none focus:border-black" />
+                      </label>
+                    </div>
+                    <button disabled={isSaving} className="bg-[#111111] text-white text-xs uppercase tracking-widest font-semibold px-6 py-2.5 hover:bg-[#252525] disabled:opacity-50">
+                      {isSaving ? 'Saving…' : 'Save Profile'}
+                    </button>
+                  </form>
                 </div>
 
                 {/* Quick Link Cards */}
@@ -333,19 +386,7 @@ export const Account: React.FC = () => {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {(user?.savedAddresses && user.savedAddresses.length > 0 ? user.savedAddresses : [
-                    {
-                      fullName: user?.name || 'Avesh Khan',
-                      phone: '+91 98765 43210',
-                      email: user?.email || 'aveshkhan069@gmail.com',
-                      address: '42, Hill Road, Bandra West',
-                      apartment: 'Apt 4B, Sea View Towers',
-                      city: 'Mumbai',
-                      state: 'Maharashtra',
-                      pinCode: '400050',
-                      country: 'India'
-                    }
-                  ]).map((addr, idx) => (
+                  {(user?.savedAddresses || []).map((addr, idx) => (
                     <div key={idx} className="p-4 border border-stone-200 bg-[#faf9f5] text-xs space-y-1 relative">
                       <span className="text-[10px] uppercase font-bold text-[#c5a880] block mb-1">
                         Default Shipping
@@ -357,6 +398,9 @@ export const Account: React.FC = () => {
                     </div>
                   ))}
                 </div>
+                {!user?.savedAddresses?.length && !isAddingAddress && (
+                  <p className="text-xs text-stone-500">No saved addresses yet. Add a delivery address to make your next order effortless.</p>
+                )}
               </div>
             )}
 
@@ -390,6 +434,17 @@ export const Account: React.FC = () => {
                     Save Preferences
                   </button>
                 </div>
+
+                <form onSubmit={handleChangePassword} className="pt-5 border-t border-stone-200 space-y-3">
+                  <h3 className="text-xs uppercase tracking-widest font-semibold text-stone-800">Change password</h3>
+                  <p className="text-xs text-stone-500">Choose at least 8 characters. Passwords are securely managed by Supabase Auth.</p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input type="password" required minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="New password" className="flex-1 bg-[#faf9f5] border border-stone-300 px-3 py-2.5 text-xs focus:outline-none focus:border-black" />
+                    <button disabled={isSaving} className="bg-[#111111] text-white text-xs uppercase tracking-widest font-semibold px-5 py-2.5 hover:bg-[#252525] disabled:opacity-50">
+                      {isSaving ? 'Updating…' : 'Update Password'}
+                    </button>
+                  </div>
+                </form>
               </div>
             )}
           </main>

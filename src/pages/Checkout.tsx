@@ -19,13 +19,13 @@ export const Checkout: React.FC = () => {
   const defaultAddress = user?.savedAddresses?.[0];
   const [shippingData, setShippingData] = useState<ShippingAddress>({
     fullName: defaultAddress?.fullName || user?.name || '',
-    phone: defaultAddress?.phone || '+91 98765 43210',
+    phone: defaultAddress?.phone || user?.phone || '',
     email: defaultAddress?.email || user?.email || '',
-    address: defaultAddress?.address || '42, Hill Road, Bandra West',
-    apartment: defaultAddress?.apartment || 'Apt 4B',
-    city: defaultAddress?.city || 'Mumbai',
-    state: defaultAddress?.state || 'Maharashtra',
-    pinCode: defaultAddress?.pinCode || '400050',
+    address: defaultAddress?.address || '',
+    apartment: defaultAddress?.apartment || '',
+    city: defaultAddress?.city || '',
+    state: defaultAddress?.state || '',
+    pinCode: defaultAddress?.pinCode || '',
     country: 'India',
   });
   const [saveAddress, setSaveAddress] = useState(true);
@@ -62,14 +62,15 @@ export const Checkout: React.FC = () => {
     );
   }
 
-  const handleShippingSubmit = (e: React.FormEvent) => {
+  const handleShippingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!shippingData.fullName || !shippingData.phone || !shippingData.address || !shippingData.pinCode) {
       showToast('Please fill out all mandatory shipping fields', 'error');
       return;
     }
     if (saveAddress) {
-      updateUserAddresses(shippingData);
+      const result = await updateUserAddresses(shippingData);
+      if (!result.success) showToast(result.message, 'error');
     }
     setCurrentStep(2);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -91,7 +92,7 @@ export const Checkout: React.FC = () => {
       size: item.selectedSize,
       price: item.unitPrice,
       quantity: item.quantity,
-      image: item.product.images?.[0] || '/src/assets/images/hero_aura_perfume_1790347541852.jpg',
+      image: item.product.images?.[0] || '/product-placeholder.svg',
     }));
 
     const orderPayload = {
@@ -599,7 +600,7 @@ export const Checkout: React.FC = () => {
                   >
                     <div className="flex gap-3 items-center">
                       <img
-                        src={item.product.images?.[0] || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+                        src={item.product.images?.[0] || '/product-placeholder.svg'}
                         alt={item.product.name}
                         className="w-14 h-14 object-cover bg-stone-100 shrink-0 border border-stone-200"
                       />

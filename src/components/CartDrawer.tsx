@@ -124,7 +124,7 @@ export const CartDrawer: React.FC = () => {
                   className="flex gap-4 p-3 bg-white border border-stone-200/80 rounded shadow-xs"
                 >
                   <img
-                    src={item.product.images?.[0] || '/src/assets/images/hero_aura_perfume_1790347541852.jpg'}
+                    src={item.product.images?.[0] || '/product-placeholder.svg'}
                     alt={item.product.name}
                     className="w-20 h-20 object-cover bg-stone-100 shrink-0"
                   />
