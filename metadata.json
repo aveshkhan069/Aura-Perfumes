@@ -1,0 +1,6 @@
+{
+  "name": "AURA Perfumes | Luxury Fragrance E-Commerce",
+  "description": "Discover signature luxury perfumes crafted for every mood, moment, and memory at AURA Perfumes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
